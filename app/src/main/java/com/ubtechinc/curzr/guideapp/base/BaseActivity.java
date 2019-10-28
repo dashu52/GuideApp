@@ -15,16 +15,17 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 
-public abstract class BaseActivity<T extends AndroidViewModel> extends AppCompatActivity {
+public abstract class BaseActivity<VM extends BaseViewModel> extends AppCompatActivity {
 
-    protected T mViewModel;
+    protected VM mViewModel;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ActivityContainer.getInstance().add(this);
         setContentView(getLayoutId());
 
-        mViewModel = (T)ViewModelProviders.of(this).get(getViewModelClass());
+        mViewModel = (VM)ViewModelProviders.of(this).get(getViewModelClass());
+        getLifecycle().addObserver(mViewModel);
         initView();
         initData();
     }
@@ -33,17 +34,13 @@ public abstract class BaseActivity<T extends AndroidViewModel> extends AppCompat
      * 获取泛型T的class类型
      * @return
      */
-    private Class getViewModelClass(){
-        Type genericSuperclass = this.getClass().getGenericSuperclass();
-        ParameterizedType parameterizedType = (ParameterizedType) genericSuperclass;
-        Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-        Class tClass = (Class) actualTypeArguments[0];
-        return tClass;
-    }
+    protected abstract Class getViewModelClass();
+
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        getLifecycle().removeObserver(mViewModel);
         ActivityContainer.getInstance().remove(this);
     }
 

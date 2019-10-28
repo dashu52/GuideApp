@@ -1,70 +1,66 @@
 package com.ubtechinc.curzr.guideapp.common;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
+import android.widget.Button;
 
-import com.amitshekhar.DebugDB;
+import androidx.lifecycle.Observer;
+
 import com.ubtechinc.curzr.guideapp.R;
-import com.ubtechinc.curzr.guideapp.database.AppDataBase;
-import com.ubtechinc.curzr.guideapp.database.entity.GLJoin;
-import com.ubtechinc.curzr.guideapp.database.entity.GLView;
-import com.ubtechinc.curzr.guideapp.database.entity.GuideLineEntity;
-import com.ubtechinc.curzr.guideapp.database.entity.LocationEntity;
-import com.ubtechinc.curzr.guideapp.database.entity.MediaResourceEntity;
-import com.ubtechinc.curzr.guideapp.database.entity.MotionEntity;
-import com.ubtechinc.curzr.guideapp.viewmodel.repository.GLRepository;
+import com.ubtechinc.curzr.guideapp.base.BaseActivity;
+import com.ubtechinc.curzr.guideapp.viewmodel.SampleViewModel;
+import com.ubtechinc.curzr.utils.CommonUtil;
 import com.ubtechinc.curzr.utils.MyLogger;
+import com.ubtechinc.curzr.utils.SPUtils;
 
-import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity<SampleViewModel> {
+
+    @BindView(R.id.btn1)
+    Button btn1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        GuideLineEntity guideLineEntity = new GuideLineEntity();
-        guideLineEntity.name = "经典路线1";
-        LocationEntity locationEntity1 = new LocationEntity();
-        locationEntity1.name = "开始点";
-        LocationEntity locationEntity2 = new LocationEntity();
-        locationEntity2.name = "结束点";
-        AppDataBase.get().getGuideLineDao().insert(guideLineEntity);
-        AppDataBase.get().getLocationDao().insert(locationEntity1);
-        AppDataBase.get().getLocationDao().insert(locationEntity2);
-        guideLineEntity = AppDataBase.get().getGuideLineDao().getAllGuideLine().get(0);
-        locationEntity1 = AppDataBase.get().getLocationDao().getAllLocation().get(0);
-        locationEntity2 = AppDataBase.get().getLocationDao().getAllLocation().get(1);
-        GLJoin glJoin = new GLJoin();
-        glJoin.guide_line_id = guideLineEntity.id;
-        glJoin.location_id = locationEntity1.id;
-        AppDataBase.get().getGLJoinDao().insert(glJoin);
+        ButterKnife.bind(this);
+        if (!SPUtils.get("db_is_created")) {
+            CommonUtil.createWithSampleData();
+            SPUtils.put("db_is_created", true);
+        }
+    }
 
-        GLJoin glJoin2 = new GLJoin();
-        glJoin2.guide_line_id = guideLineEntity.id;
-        glJoin2.location_id = locationEntity2.id;
-        AppDataBase.get().getGLJoinDao().insert(glJoin2);
+    @Override
+    protected Class getViewModelClass() {
+        return SampleViewModel.class;
+    }
 
-        List<LocationEntity> locationEntityList = AppDataBase.get().getGLJoinDao().getLocationListFor(guideLineEntity.id);
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_main;
+    }
 
-        List<GLView> glViewList = AppDataBase.get().getGLViewDao().getAllGLView();
+    @Override
+    protected void initView() {
 
-        MediaResourceEntity mediaResourceEntity = new MediaResourceEntity();
-        mediaResourceEntity.face_id = "face_happy";
-        mediaResourceEntity.face_name = "高兴";
-        mediaResourceEntity.location_id = glViewList.get(0).location_id;
-        AppDataBase.get().getMediaResourceDao().insert(mediaResourceEntity);
-        mediaResourceEntity = AppDataBase.get().getMediaResourceDao().getAllMediaResource().get(0);
-        MotionEntity hug = new MotionEntity();
-        hug.motion_id = "hug";
-        hug.name = "拥抱";
-        hug.mediaResourceId = mediaResourceEntity.id;
-        AppDataBase.get().getMotionDao().insert(hug);
-        List<MotionEntity> motionEntityList = AppDataBase.get().getMotionDao().getAllMotion();
+    }
 
-        GuideLineEntity guideLineEntityFull = new GLRepository().getGuideLineData(guideLineEntity);
+    @Override
+    protected void initData() {
+        mViewModel.mErrorMsg.observe(this, new Observer<String>() {
+            @Override
+            public void onChanged(String msg) {
+                MyLogger.dLog().d("onChanged ：" + msg);
+            }
+        });
+        mViewModel.getAllGLLiveData().observe(this,guideLineEntityList ->{
+            MyLogger.dLog().d("guideLineEntityList="+guideLineEntityList);
+        });
+    }
 
-        MyLogger.dLog().d("ip===="+ DebugDB.getAddressLog());
+    @OnClick(R.id.btn1)
+    public void onViewClicked() {
+        mViewModel.test();
     }
 }

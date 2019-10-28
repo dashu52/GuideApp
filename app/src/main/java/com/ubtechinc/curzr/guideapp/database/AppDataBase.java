@@ -7,19 +7,24 @@ import androidx.room.RoomDatabase;
 import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.amitshekhar.DebugDB;
 import com.ubtechinc.curzr.guideapp.common.APP;
 import com.ubtechinc.curzr.guideapp.database.dao.GLJoinDao;
 import com.ubtechinc.curzr.guideapp.database.dao.GLViewDao;
 import com.ubtechinc.curzr.guideapp.database.dao.GuideLineDao;
 import com.ubtechinc.curzr.guideapp.database.dao.LocationDao;
 import com.ubtechinc.curzr.guideapp.database.dao.MediaResourceDao;
-import com.ubtechinc.curzr.guideapp.database.dao.MotionDao;
+import com.ubtechinc.curzr.guideapp.database.entity.Emotion;
 import com.ubtechinc.curzr.guideapp.database.entity.GLJoin;
 import com.ubtechinc.curzr.guideapp.database.entity.GLView;
 import com.ubtechinc.curzr.guideapp.database.entity.GuideLineEntity;
 import com.ubtechinc.curzr.guideapp.database.entity.LocationEntity;
 import com.ubtechinc.curzr.guideapp.database.entity.MediaResourceEntity;
-import com.ubtechinc.curzr.guideapp.database.entity.MotionEntity;
+import com.ubtechinc.curzr.guideapp.database.entity.Motion;
+import com.ubtechinc.curzr.guideapp.viewmodel.repository.SampleRepository;
+import com.ubtechinc.curzr.utils.MyLogger;
+
+import java.util.List;
 
 @Database(
         entities = {
@@ -27,7 +32,6 @@ import com.ubtechinc.curzr.guideapp.database.entity.MotionEntity;
             LocationEntity.class,
             GLJoin.class,
             MediaResourceEntity.class,
-            MotionEntity.class
         },
         views = {
             GLView.class
@@ -58,5 +62,6 @@ public abstract class AppDataBase extends RoomDatabase {
     public abstract LocationDao getLocationDao();
     public abstract GLViewDao getGLViewDao();
     public abstract MediaResourceDao getMediaResourceDao();
-    public abstract MotionDao getMotionDao();
+
+
 }

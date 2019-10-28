@@ -11,5 +11,5 @@ public class Music {
 
     public String music_mame;
 
-    public String music_cost_time;
+    public long music_cost_time;
 }

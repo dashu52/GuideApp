@@ -8,5 +8,5 @@ package com.ubtechinc.curzr.guideapp.database.entity;
 public class Video {
     public String video_name;
     public String video_path;
-    public String void_cost_time;
+    public long void_cost_time;
 }

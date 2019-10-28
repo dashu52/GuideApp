@@ -1,5 +1,6 @@
 package com.ubtechinc.curzr.guideapp.database.dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -27,6 +28,9 @@ public interface GuideLineDao {
 
     @Query("select * from guide_line_table")
     List<GuideLineEntity> getAllGuideLine();
+
+    @Query("select * from guide_line_table")
+    LiveData<List<GuideLineEntity>> getAllGuideLineLive();
 
 
     @Update(onConflict = OnConflictStrategy.REPLACE)

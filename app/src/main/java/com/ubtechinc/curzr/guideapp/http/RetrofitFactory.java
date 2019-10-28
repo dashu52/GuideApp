@@ -2,7 +2,9 @@ package com.ubtechinc.curzr.guideapp.http;
 
 
 import com.trello.rxlifecycle2.LifecycleTransformer;
+import com.ubtechinc.cruzr.httpmodule.base.RetrofitServiceManager;
 import com.ubtechinc.curzr.guideapp.bean.CurrencyBean;
+import com.ubtechinc.curzr.guideapp.common.APP;
 import com.ubtechinc.curzr.utils.MyLogger;
 
 import java.util.concurrent.TimeUnit;
@@ -30,24 +32,27 @@ public class RetrofitFactory {
     private static RetrofitFactory mRetrofitFactory;
 
     private RetrofitFactory() {
-        //创建日志拦截器
-        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
-        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//设定日志级别
-        //创建OkHttpClient
-        OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(ApiService.HTTP_TIME, TimeUnit.SECONDS)
-                .readTimeout(ApiService.HTTP_TIME, TimeUnit.SECONDS)
-                .writeTimeout(ApiService.HTTP_TIME, TimeUnit.SECONDS)
-                .addInterceptor(httpLoggingInterceptor)//添加拦截器
-                .build();
-        //创建Retrofit
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ApiService.BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())//添加gson转换器
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//添加rxjava2转换器
-                .client(mOkHttpClient)
-                .build();
+//        //创建日志拦截器
+//        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+//        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);//设定日志级别
+//        //创建OkHttpClient
+//        OkHttpClient mOkHttpClient = new OkHttpClient.Builder()
+//                .connectTimeout(ApiService.HTTP_TIME, TimeUnit.SECONDS)
+//                .readTimeout(ApiService.HTTP_TIME, TimeUnit.SECONDS)
+//                .writeTimeout(ApiService.HTTP_TIME, TimeUnit.SECONDS)
+//                .addInterceptor(httpLoggingInterceptor)//添加拦截器
+//                .build();
+//        //创建Retrofit
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl(ApiService.BASE_URL)
+//                .addConverterFactory(GsonConverterFactory.create())//添加gson转换器
+//                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())//添加rxjava2转换器
+//                .client(mOkHttpClient)
+//                .build();
 
+        RetrofitServiceManager serviceManager = RetrofitServiceManager.getInstance();
+        serviceManager.setContent(APP.getContext());
+        Retrofit retrofit = serviceManager.createRetrofit(ApiService.BASE_URL);
         //创建接口实现类
         mApiService = retrofit.create(ApiService.class);
 

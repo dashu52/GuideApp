@@ -3,11 +3,8 @@ package com.ubtechinc.curzr.guideapp.database.entity;
 import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
-import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-
-import java.util.List;
 
 /**
  * @author jianlin.duan
@@ -34,10 +31,10 @@ public class MediaResourceEntity {
     /**说话内容**/
     public String introduce_tts;
 
-    public String face_name;
-
-    public String face_id;
-
+    @Embedded
+    public Emotion emotion;
+    @Embedded
+    public Motion motion;
     @Embedded
     public Music music;
     @Embedded
@@ -45,8 +42,4 @@ public class MediaResourceEntity {
     @Embedded
     public Picture picture;
 
-    //1 MediaResourceEntity 对* MotionEntity
-    // 不存数据库字段，程序运行时使用
-    @Ignore
-    public List<MotionEntity> mMotionList;
 }

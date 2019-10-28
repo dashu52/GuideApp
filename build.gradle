@@ -1,5 +1,6 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 import java.text.SimpleDateFormat
+apply from: 'gradle/builds.gradle'
 
 buildscript {
     repositories {
@@ -8,87 +9,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
-        
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {url 'http://maven.aliyun.com/nexus/content/repositories/releases/'}
-        maven {url 'https://dl.bintray.com/polyv/android'}
-
-        // 产品团队的 release 仓库
-        maven {
-            url "${artifactory_url}/${artifactory_cruzr_release}"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-
-        // 产品团队的 snapshot 仓库
-        maven {
-            url "${artifactory_url}/${artifactory_cruzr_snapshot}"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-
-        // release 虚拟仓库
-        maven {
-            url "${artifactory_url}/${artifactory_virtual_release}"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-
-        // snapshot 虚拟仓库（如果没有依赖外部仓库的 snapshot 库，则不用配置）
-        maven {
-            url "${artifactory_url}/${artifactory_virtual_snapshot}"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-
-        maven {
-            url "${artifactory_url}/${artifactory_rose_release}"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-
-        maven {
-            url "${artifactory_url}/${artifactory_rose_snapshot}"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-        maven {
-            url "${artifactory_url}/${artifactory_rosa_release}"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-
-        maven {
-            url "${artifactory_url}/${artifactory_rosa_snapshot}"
-            credentials {
-                username = artifactory_username
-                password = artifactory_password
-            }
-        }
-
-
+        classpath 'com.jakewharton:butterknife-gradle-plugin:10.2.0'
     }
 }
 
@@ -103,12 +24,12 @@ def currentSystemTime() {
 
 //获取当前分支名称
 def getGitBranchName() {
-    return 'git symbolic-ref --short -q HEAD'.execute().text.trim()
+    return "git symbolic-ref --short -q HEAD".execute().text.trim()
 }
 
 //获取当前提交节点
 def getGitCommit() {
-    return 'git rev-parse HEAD'.execute().text.trim()
+    return "git rev-parse HEAD".execute().text.trim()
 }
 
 //获取Jenkins传入的编译参数
@@ -123,3 +44,4 @@ def getJenkinsBuildProduct() {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
